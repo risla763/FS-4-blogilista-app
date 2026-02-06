@@ -4,11 +4,13 @@
   "description": "",
   "license": "ISC",
   "author": "",
-  "type": "module",
+  "type": "commonjs",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "run": "node watch--"
+    "start": "node app.js",
+    "dev": "node --watch app.js",
+    "test": "node --test",
+    "lint": "eslint ."
   },
   "dependencies": {
     "dotenv": "^17.2.3",

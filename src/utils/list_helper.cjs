@@ -40,9 +40,47 @@ const mostBlogs = (blogs) => {
   return { author: author, blogs: max }
 }
 
+const mostLikes = (blogs) => {
+  let apulista = {}
+  let listOfAuthors = []
+  let listofLikes = []
+  let max = 0
+  let author = ""
+  for (let i = 0; i < blogs.length; i++){
+    listOfAuthors.push(blogs[i].author)
+    listofLikes.push(blogs[i].likes)
+  }
+  console.log(listOfAuthors, listofLikes)
+  //tehdään tuple lista
+  let tupleList = []
+  for (let i = 0; i < blogs.length; i++) {
+    console.log("moi", i, tupleList, listOfAuthors[i], listofLikes[i])
+    const existing = tupleList.find(t => t[0] === listOfAuthors[i])
+    console.log(existing,"testi")
+    console.log(existing, listOfAuthors[i], listofLikes[i])
+
+    if (existing) {
+      existing[1] += listofLikes[i]
+      console.log("on jo listalla")
+
+    } else {
+      tupleList.push([listOfAuthors[i], listofLikes[i]])
+      console.log("ei ole listalla, lisätään", listOfAuthors[i], listofLikes[i])
+    }
+  for (let i =0; i < tupleList.length; i++){
+    if (tupleList[i][1] > max) {
+      max = tupleList[i][1]
+      author = tupleList[i][0]
+    }
+  }
+  }
+  console.log(author,max)
+  return { author: author, likes: max }
+}
 module.exports = {
   dummy,
   totalLikes,
   favouriteBlog,
-  mostBlogs
+  mostBlogs,
+  mostLikes
 }

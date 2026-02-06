@@ -8,6 +8,15 @@ app.use(express.json())
 
 app.use('/api/blogs', blogs)
 
+const favouriteBlog = (blogs) => {
+  const favourite = blogs[0].likes
+  for (let i = 0; i < blogs.length; i++) {
+    if (blogs[i].likes > favourite)
+      favourite = blogs[i].likes
+  }
+  return favourite
+}
+
 app.listen(config.PORT, () => {
   console.log(`Server running on port ${config.PORT}`)
 })

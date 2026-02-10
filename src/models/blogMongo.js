@@ -14,4 +14,4 @@ const Blog = mongoose.model('Blog', blogSchema)
 
 mongoose.connect(config.MONGODB_URI)
 
-export default { blogSchema, Blog }
+export default Blog

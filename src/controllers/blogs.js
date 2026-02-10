@@ -5,13 +5,13 @@ const router = express.Router()
 
 //hakee blogit (api/blogs HUOM!)
 router.get('/', (request, response) => {
-  blogMongo.Blog.find({}).then((blogs) => {
+  blogMongo.find({}).then((blogs) => {
     response.json(blogs)
   })
 })
 
 router.post('/', (request, response) => {
-  const blog = new blogMongo.Blog(request.body)
+  const blog = new blogMongo(request.body)
 
   blog.save().then((result) => {
     response.status(201).json(result)

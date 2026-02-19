@@ -49,3 +49,25 @@ test('a blog has key id', async ()=> {
       assert.fail("Blog has an '_id'")
     }
 })
+
+//katkaise aina testien jälkeen yhteys tietokantaan 
+after(async () => {
+  await mongoose.connection.close()
+})
+
+
+test('you can post a blog', async () => {
+    await Blog.deleteMany({})
+    const oldLength = (await api.get('/api/blogs')).body.length
+    console.log(oldLength, "vanha pituus")
+    const newBlog = await api.post('/api/blogs').send({
+      title: "React patterns",
+      author: "Michael Chan",
+      url: "https://reactpatterns.com/",
+      likes: 7
+    })
+    const newLength = (await api.get('/api/blogs')).body.length
+    console.log(newLength, "uusi pituus")
+    assert.strictEqual(newLength, oldLength + 1)
+    assert.strictEqual(newBlog.body.title, "React patterns")
+})

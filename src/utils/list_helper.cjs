@@ -12,6 +12,21 @@ const totalLikes = (blogs) => {
   return total
 }
 
+//4.9 uutta koodia
+
+const idMatches = (blogs) => {
+  const obj = {
+    key1: "value1",
+    key2: "value2"
+  }
+  for (const [key] of Object.entries(obj)){
+    if (key == "id")
+      return true
+    else return false
+  }
+
+  }
+
 const favouriteBlog = (blogs) => {
   let favourite = blogs[0].likes
   for (let i = 0; i < blogs.length; i++) {
@@ -56,8 +71,8 @@ const mostLikes = (blogs) => {
   for (let i = 0; i < blogs.length; i++) {
     console.log("moi", i, tupleList, listOfAuthors[i], listofLikes[i])
     const existing = tupleList.find(t => t[0] === listOfAuthors[i])
-    console.log(existing,"testi")
-    console.log(existing, listOfAuthors[i], listofLikes[i])
+    //console.log(existing,"testi")
+    //console.log(existing, listOfAuthors[i], listofLikes[i])
 
     if (existing) {
       existing[1] += listofLikes[i]
@@ -82,5 +97,6 @@ module.exports = {
   totalLikes,
   favouriteBlog,
   mostBlogs,
-  mostLikes
+  mostLikes,
+  idMatches
 }

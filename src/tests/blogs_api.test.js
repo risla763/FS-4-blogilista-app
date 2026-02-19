@@ -37,3 +37,15 @@ test('return all the blogs', async () => {
 after(async () => {
   await mongoose.connection.close()
 })
+
+test('a blog has key id', async ()=> {
+    const response = await api.get('/api/blogs')
+    const testobject = response.body[0]
+    const keyName = Object.keys(testobject)[0]
+    assert.strictEqual(keyName, "id")
+    if (testobject._id === undefined) {
+      assert.ok(true)
+    } else {
+      assert.fail("Blog has an '_id'")
+    }
+})

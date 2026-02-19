@@ -12,6 +12,9 @@ router.get('/', (request, response) => {
 
 router.post('/', (request, response) => {
   const blog = new blogMongo(request.body)
+  if (blog.likes === undefined){
+    blog.likes = 0
+  }
 
   blog.save().then((result) => {
     response.status(201).json(result)

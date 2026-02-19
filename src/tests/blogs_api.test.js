@@ -71,3 +71,18 @@ test('you can post a blog', async () => {
     assert.strictEqual(newLength, oldLength + 1)
     assert.strictEqual(newBlog.body.title, "React patterns")
 })
+
+
+test('when likes are not posted, then likes are set to beign 0', async () => {
+    const newBlog = await api.post('/api/blogs').send({
+      title: "React patterns",
+      author: "Michael Chan",
+      url: "https://reactpatterns.com/",
+      likes: undefined
+    })
+    const response = (await api.get('/api/blogs'))
+    const latestBlog = response.body[response.body.length -1]
+    assert.strictEqual(latestBlog.likes,0)
+    console.log(latestBlog.likes, "testiä taas")
+})
+

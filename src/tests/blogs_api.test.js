@@ -100,5 +100,19 @@ test('if thete are no title and/or url ', async () => {
     
 })
 
+test('can delete an one blog at a time', async () => {
+    const newBlog = await api.post('/api/blogs').send({
+      title: "testiblogi",
+      author: "testikäyttäjä",
+      url: "https://testi.com",
+      likes: 0
+    })
+    const oldLength = (await api.get('/api/blogs')).body.length
+    const deletedBlog = await api.delete('/api/blogs/' + newBlog.body.id)
+    assert.strictEqual(deletedBlog.status, 204)
+    const newLength = (await api.get('/api/blogs')).body.length
+    assert.strictEqual(newLength, oldLength - 1)
+})
+
 after(async () => {mongoose.connection.close()
 })

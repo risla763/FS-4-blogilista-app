@@ -4,6 +4,7 @@ import app from '../app.js'
 import mongoose from 'mongoose'
 import supertest from 'supertest'
 import Blog from '../models/blogMongo.js'
+import { get } from 'node:http'
 
 const initialBlogs = [
   {
@@ -112,6 +113,28 @@ test('can delete an one blog at a time', async () => {
     assert.strictEqual(deletedBlog.status, 204)
     const newLength = (await api.get('/api/blogs')).body.length
     assert.strictEqual(newLength, oldLength - 1)
+})
+
+test('blog can be updated', async () => {
+    const newBlog = await api.post('/api/blogs').send({
+    title: "testiblogi",
+    author: "testikäyttäjä",
+    url: "https://testi.com",
+    likes: 0
+    })
+    const update = await api.put(`/api/blogs/${newBlog.body.id}`).send({
+      title: "Päivitetty",
+      author: "Uusi",
+      url: "https://uusi.com",
+      likes: 67
+    })
+    const testi = await api.get(`/api/blogs/`)
+    const testiBlog = testi.body.find(blog => blog.id === newBlog.body.id)
+    assert.strictEqual(testiBlog.title, "Päivitetty")
+    assert.strictEqual(testiBlog.author, "Uusi")
+    assert.strictEqual(testiBlog.url, "https://uusi.com")
+    assert.strictEqual(testiBlog.likes, 67)
+    assert.strictEqual(testiBlog.id, newBlog.body.id)
 })
 
 after(async () => {mongoose.connection.close()

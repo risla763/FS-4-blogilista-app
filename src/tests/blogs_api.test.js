@@ -50,10 +50,6 @@ test('a blog has key id', async ()=> {
     }
 })
 
-//katkaise aina testien jälkeen yhteys tietokantaan 
-after(async () => {
-  await mongoose.connection.close()
-})
 
 
 test('you can post a blog', async () => {
@@ -73,6 +69,7 @@ test('you can post a blog', async () => {
 })
 
 
+
 test('when likes are not posted, then likes are set to beign 0', async () => {
     const newBlog = await api.post('/api/blogs').send({
       title: "React patterns",
@@ -86,3 +83,22 @@ test('when likes are not posted, then likes are set to beign 0', async () => {
     console.log(latestBlog.likes, "testiä taas")
 })
 
+
+test('if thete are no title and/or url ', async () => {
+    const newBlog = await api.post('/api/blogs').send({
+      author: "Michael Chan",
+      url: "https://reactpatterns.com/",
+      likes: 7
+    })
+    assert.strictEqual(newBlog.status, 400)
+    const otherBlog = await api.post('/api/blogs').send({
+      title: "React patterns",
+      author: "Michael Chan", 
+      likes: 2
+    })
+    assert.strictEqual(otherBlog.status, 400)        
+    
+})
+
+after(async () => {mongoose.connection.close()
+})

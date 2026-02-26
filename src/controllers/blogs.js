@@ -4,21 +4,21 @@ import blogMongo from '../models/blogMongo.js'
 const router = express.Router()
 
 //hakee blogit (api/blogs HUOM!)
-router.get('/', (request, response) => {
-  blogMongo.find({}).then((blogs) => {
-    response.json(blogs)
-  })
+router.get('/', async (request, response) => {
+  const blogs = await blogMongo.find({})
+  response.json(blogs)
 })
 
-router.post('/', (request, response) => {
-  const blog = new blogMongo(request.body)
-  if (blog.likes === undefined){
-    blog.likes = 0
+router.post('/', async (request, response) => {
+  const blogObject = new blogMongo(request.body)
+  if (blogObject.likes === undefined){
+    blogObject.likes = 0
   }
-
-  blog.save().then((result) => {
-    response.status(201).json(result)
-  })
+  if (!blogObject.title || !blogObject.url) {
+    return response.status(400).end()
+  }
+  const savedBlog = await blogObject.save()
+  response.status(201).json(savedBlog)
 })
 
 

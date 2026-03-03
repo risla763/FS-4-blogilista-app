@@ -5,6 +5,7 @@ import mongoose from 'mongoose'
 import supertest from 'supertest'
 import Blog from '../models/blogMongo.js'
 import { get } from 'node:http'
+import User from '../models/userMongo.js'
 
 const initialBlogs = [
   {
@@ -34,10 +35,6 @@ test('return all the blogs', async () => {
   assert.strictEqual(response.body.length, 2)
 })
 
-//katkaise aina testien jälkeen yhteys tietokantaan 
-after(async () => {
-  await mongoose.connection.close()
-})
 
 test('a blog has key id', async ()=> {
     const response = await api.get('/api/blogs')
@@ -137,5 +134,60 @@ test('blog can be updated', async () => {
     assert.strictEqual(testiBlog.id, newBlog.body.id)
 })
 
-after(async () => {mongoose.connection.close()
+test('user cannot be created without name, username or password', async () => {
+    const newUser = await api.post('/api/users').send({
+      username: "testikäyttäjä",
+      name: "Testinimii",
+      password: undefined
+    })
+    assert.strictEqual(newUser.status, 400)
+    const otherUser = await api.post('/api/users').send({
+      username: "testikäyttäjä",
+      name: undefined,
+      password: "salasana"
+    })
+    assert.strictEqual(otherUser.status, 400)
+    const thirdUser = await api.post('/api/users').send({
+      username: undefined,
+      name: "Testinimii",
+      password: "moimoi"
+    })
+    assert.strictEqual(thirdUser.status, 400)
+})
+
+test('username and password needs to be 3 or more marks long', async () => {
+    const newUser = await api.post('/api/users').send({
+      username: "oo",
+      name: "Testinimii",
+      password: "moiiii67"
+    })
+    assert.strictEqual(newUser.status, 400)
+
+    const newUser2 = await api.post('/api/users').send({
+      username: "testikäyttäjä",
+      name: "Testinimii",
+      password: "oo"
+    })
+    assert.strictEqual(newUser2.status, 400)
+})
+
+test('username needs to be unique', async () =>{
+    await User.deleteMany({})
+    const newUser = await api.post('/api/users').send({
+      username: "moikkamoii",
+      name: "Testinimii",
+      password: "moiiii67"
+    })
+    assert.strictEqual(newUser.status, 201)
+    const newUser2 = await api.post('/api/users').send({
+      username: "moikkamoii",
+      name: "Testinimii2",
+      password: "moiiii67"
+    })
+    assert.strictEqual(newUser2.status, 400)
+})
+
+
+after(async () => {
+  await mongoose.connection.close()
 })

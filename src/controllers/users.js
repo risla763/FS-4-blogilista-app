@@ -8,9 +8,17 @@ const router = express.Router()
 router.post('/', async (request, response) => {
   const newUser = request.body
   if (!newUser.username || !newUser.name || !newUser.password) {
-    return response.status(400).end()
+    return response.status(400).json({error:'username, name and password all are needed'})
   }
-    
+  if (newUser.password.length < 3 || newUser.username.length < 3) {
+    return response.status(400).json({error: 'username and password need to be atleast 3 marks long'})
+  }
+  const users = await UserMongo.find({})
+  if (users.find(name => newUser.username == name.username))
+  {
+    return response.status(400).json({error: 'username already exists'})
+  }
+
   const passwordHash = await bcrypt.hash(newUser.password, 10)
   const user = new UserMongo({
     username: newUser.username,

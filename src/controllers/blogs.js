@@ -2,8 +2,15 @@ import express from 'express'
 import blogMongo from '../models/blogMongo.js'
 //import { use } from 'react'
 import userMongo from '../models/userMongo.js'
+import jsonwebtoken from 'jsonwebtoken'
 
 const router = express.Router()
+const getTokenFrom = request => {
+  const authorization = request.get('authorization')
+  if (authorization && authorization.startsWith('Bearer')){    return authorization.replace('Bearer ', '')
+  }
+  return null 
+  }
 
 
 router.get('/', async (request, response) => {
@@ -15,7 +22,17 @@ router.get('/', async (request, response) => {
 
 router.post('/', async (request, response) => {
   const blogObject = new blogMongo(request.body)
-  const user = await userMongo.findById(request.body.user)
+  const decodedToken = jsonwebtoken.verify(getTokenFrom(request),process.env.SECRET)
+  if (!decodedToken.id){
+    return response.status(401).json({error: 'token invalid'})
+  }
+  const user = await userMongo.findById(decodedToken.id)
+
+  if (!user){
+    return response.status(400).json({error: 'UserId missing or not valid'
+
+    })
+  }
   blogObject.user = user.id
   if (blogObject.likes === undefined){
     blogObject.likes = 0

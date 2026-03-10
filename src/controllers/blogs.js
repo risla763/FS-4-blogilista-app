@@ -1,16 +1,22 @@
 import express from 'express'
 import blogMongo from '../models/blogMongo.js'
+//import { use } from 'react'
+import userMongo from '../models/userMongo.js'
 
 const router = express.Router()
 
-//hakee blogit (api/blogs HUOM!)
+
 router.get('/', async (request, response) => {
-  const blogs = await blogMongo.find({})
-  response.json(blogs)
+  const blogs = await blogMongo.find({}).populate(
+    'user', {username: 1, name: 1, _id: 1}
+  )
+  return response.json(blogs)
 })
 
 router.post('/', async (request, response) => {
   const blogObject = new blogMongo(request.body)
+  const user = await userMongo.findById(request.body.user)
+  blogObject.user = user.id
   if (blogObject.likes === undefined){
     blogObject.likes = 0
   }
@@ -18,6 +24,12 @@ router.post('/', async (request, response) => {
     return response.status(400).end()
   }
   const savedBlog = await blogObject.save()
+
+  console.log(savedBlog._id, "blogin id")
+  user.blogs = user.blogs.concat(savedBlog.id)
+  console.log(user.blogs, "käyttäjän blogit")
+  await user.save()
+
   response.status(201).json(savedBlog)
 })
 
@@ -40,5 +52,8 @@ router.put('/:id', async (request, response) => {
   const updatedBlog = await blog.save()
   response.json(updatedBlog)
 })
+
+
+
 
 export default router

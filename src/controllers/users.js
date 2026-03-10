@@ -1,6 +1,7 @@
 import express from 'express'
 import UserMongo from '../models/userMongo.js'
 import bcrypt from 'bcrypt'
+import populate from 'dotenv'
 
 const router = express.Router()
 
@@ -30,7 +31,7 @@ router.post('/', async (request, response) => {
 })
 
 router.get('/', async (request, response) => {
-    const users = await UserMongo.find({}, { username: 1, name: 1 , id: 1})
+    const users = await UserMongo.find({}).populate('blogs', {title: 1, author: 1, url: 1})
     response.json(users)
 })
 export default router

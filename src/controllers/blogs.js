@@ -5,12 +5,6 @@ import userMongo from '../models/userMongo.js'
 import jsonwebtoken from 'jsonwebtoken'
 
 const router = express.Router()
-const getTokenFrom = request => {
-  const authorization = request.get('authorization')
-  if (authorization && authorization.startsWith('Bearer')){    return authorization.replace('Bearer ', '')
-  }
-  return null 
-  }
 
 
 router.get('/', async (request, response) => {
@@ -22,7 +16,8 @@ router.get('/', async (request, response) => {
 
 router.post('/', async (request, response) => {
   const blogObject = new blogMongo(request.body)
-  const decodedToken = jsonwebtoken.verify(getTokenFrom(request),process.env.SECRET)
+  console.log('request token on', request.tok)
+  const decodedToken = jsonwebtoken.verify(request.tok, process.env.SECRET)
   if (!decodedToken.id){
     return response.status(401).json({error: 'token invalid'})
   }

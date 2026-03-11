@@ -46,7 +46,32 @@ router.post('/', async (request, response) => {
 })
 
 router.delete('/:id',async (request, response) => {
-  const blog = await blogMongo.findByIdAndDelete(request.params.id)
+  console.log("Delete testi", request.params.id)
+  const decodedToken = jsonwebtoken.verify(request.tok, process.env.SECRET)
+  if (!decodedToken.id){
+    return response.status(401).json({error: 'token invalid'})
+  }
+  const user = await userMongo.findById(decodedToken.id)
+
+  if (!user){
+    return response.status(400).json({error: 'UserId missing or not valid'
+
+    })
+  }
+  const userAllBlogs = await userMongo
+  .findById(user)
+  .populate('blogs')
+
+  console.log("Delete testi", request.params.id)
+  console.log("Delete blogit", user.blogs)
+  const blog = await blogMongo.findById(request.params.id)
+  if (blog.user.toString() === user.id.toString()) {
+    await blog.deleteOne()
+  }
+  else {
+    return response.status(400).json({error: 'Blog not found'})
+  }
+
   response.status(204).end()
 })
 

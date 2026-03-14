@@ -2,7 +2,8 @@ import express from 'express'
 import blogMongo from '../models/blogMongo.js'
 //import { use } from 'react'
 import userMongo from '../models/userMongo.js'
-import jsonwebtoken from 'jsonwebtoken'
+// OIKEIN
+import { userExtractor } from '../utils/middleware.js'
 
 const router = express.Router()
 
@@ -14,20 +15,10 @@ router.get('/', async (request, response) => {
   return response.json(blogs)
 })
 
-router.post('/', async (request, response) => {
+router.post('/', userExtractor,  async (request, response) => {
   const blogObject = new blogMongo(request.body)
-  console.log('request token on', request.tok)
-  const decodedToken = jsonwebtoken.verify(request.tok, process.env.SECRET)
-  if (!decodedToken.id){
-    return response.status(401).json({error: 'token invalid'})
-  }
-  const user = await userMongo.findById(decodedToken.id)
 
-  if (!user){
-    return response.status(400).json({error: 'UserId missing or not valid'
-
-    })
-  }
+ const user = request.user
   blogObject.user = user.id
   if (blogObject.likes === undefined){
     blogObject.likes = 0
@@ -45,25 +36,14 @@ router.post('/', async (request, response) => {
   response.status(201).json(savedBlog)
 })
 
-router.delete('/:id',async (request, response) => {
+router.delete('/:id', userExtractor, async (request, response) => {
   console.log("Delete testi", request.params.id)
-  const decodedToken = jsonwebtoken.verify(request.tok, process.env.SECRET)
-  if (!decodedToken.id){
-    return response.status(401).json({error: 'token invalid'})
-  }
-  const user = await userMongo.findById(decodedToken.id)
+  const user = request.user
 
-  if (!user){
-    return response.status(400).json({error: 'UserId missing or not valid'
 
-    })
-  }
-  const userAllBlogs = await userMongo
-  .findById(user)
-  .populate('blogs')
 
   console.log("Delete testi", request.params.id)
-  console.log("Delete blogit", user.blogs)
+  console.log("Delete kaikki userin blogit", user.blogs)
   const blog = await blogMongo.findById(request.params.id)
   if (blog.user.toString() === user.id.toString()) {
     await blog.deleteOne()

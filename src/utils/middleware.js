@@ -1,15 +1,37 @@
-const tokenExtractor = (request, response, next) => {
+import jsonwebtoken from 'jsonwebtoken'
+import userMongo from '../models/userMongo.js'
+export const tokenExtractor = (request, response, next) => {
   const authorization = request.get('authorization')
     if (authorization && authorization.startsWith('Bearer '))
     {
     request.tok = authorization.replace('Bearer ', '')
     }
     else {
-    return null
+    return response.status(401).json({error: 'No token'})
     }
 
     next()
 }
 
+//tähän se, joka selvittää pyynnön:
+export const userExtractor = async (request, response, next) => {
+    //pyyntöön liittyvä käyttäjä?
+  const decodedToken = jsonwebtoken.verify(request.tok, process.env.SECRET)
+  if (!decodedToken.id){
+    return response.status(401).json({error: 'token invalid'})
+  }
+  const user = await userMongo.findById(decodedToken.id)
 
-export default tokenExtractor
+  if (user){
+    request.user = user
+  }
+  else {
+    return response.status(400).json({error: 'UserId missing or not valid'
+
+    })
+  }
+  next()
+}
+
+
+

@@ -17,6 +17,29 @@ const initialBlogs = [
     "__v": 0
   }
 ]
+test('make TestUser in the database with token', async() => {
+    const newUser = await api.post('/api/users').send({
+      username: "isotestiusername",
+      name: "Testinimii123456789",
+      password: "moiiii67"
+    })
+    assert.strictEqual(newUser.status, 201)
+})
+
+
+let token
+test('login with a test user', async() => {
+    const loginStuff = await api.post('/api/login').send({
+      username: "isotestiusername",
+      password: "moiiii67"
+    })
+    const response = await api.get('/api/users')
+    const userAdded = response.body.find(user => user.username === "isotestiusername" )
+    console.log(loginStuff.body.token, "toi on se token")
+    assert.strictEqual(response.status, 200)
+    assert(loginStuff.body.token)
+    token = loginStuff.body.token
+})
 
 beforeEach(async () => {
   await Blog.deleteMany({})
@@ -31,7 +54,6 @@ const api = supertest(app)
 
 test('return all the blogs', async () => {
   const response = await api.get('/api/blogs')
-    console.log(response.body)
   assert.strictEqual(response.body.length, 2)
 })
 
@@ -46,7 +68,7 @@ test('a blog has key id', async ()=> {
     } else {
       assert.fail("Blog has an '_id'")
     }
-})
+})  
 
 
 
@@ -54,22 +76,43 @@ test('you can post a blog', async () => {
     await Blog.deleteMany({})
     const oldLength = (await api.get('/api/blogs')).body.length
     console.log(oldLength, "vanha pituus")
-    const newBlog = await api.post('/api/blogs').send({
+
+    const newBlog = await api.post('/api/blogs')
+    .set('Authorization', `Bearer ${token}`)
+    .send({
       title: "React patterns",
       author: "Michael Chan",
       url: "https://reactpatterns.com/",
       likes: 7
     })
+
     const newLength = (await api.get('/api/blogs')).body.length
     console.log(newLength, "uusi pituus")
     assert.strictEqual(newLength, oldLength + 1)
     assert.strictEqual(newBlog.body.title, "React patterns")
 })
 
+test('you cannot post a blog whitout token', async () => {
+    await Blog.deleteMany({})
+    const oldLength = (await api.get('/api/blogs')).body.length
+    console.log(oldLength, "vanha pituus")
+
+    const newBlog = await api.post('/api/blogs')
+    .send({
+      title: "React patterns",
+      author: "Michael Chan",
+      url: "https://reactpatterns.com/",
+      likes: 7
+    })
+    assert.strictEqual(newBlog.status, 401)
+
+})
 
 
 test('when likes are not posted, then likes are set to beign 0', async () => {
-    const newBlog = await api.post('/api/blogs').send({
+    const newBlog = await api.post('/api/blogs')
+    .set('Authorization', `Bearer ${token}`)
+    .send({
       title: "React patterns",
       author: "Michael Chan",
       url: "https://reactpatterns.com/",
@@ -83,13 +126,16 @@ test('when likes are not posted, then likes are set to beign 0', async () => {
 
 
 test('if thete are no title and/or url ', async () => {
-    const newBlog = await api.post('/api/blogs').send({
+    const newBlog = await api.post('/api/blogs').set('Authorization', `Bearer ${token}`)
+    .send({
       author: "Michael Chan",
       url: "https://reactpatterns.com/",
       likes: 7
     })
     assert.strictEqual(newBlog.status, 400)
-    const otherBlog = await api.post('/api/blogs').send({
+    const otherBlog = await api.post('/api/blogs')
+    .set('Authorization', `Bearer ${token}`)
+    .send({
       title: "React patterns",
       author: "Michael Chan", 
       likes: 2
@@ -99,21 +145,25 @@ test('if thete are no title and/or url ', async () => {
 })
 
 test('can delete an one blog at a time', async () => {
-    const newBlog = await api.post('/api/blogs').send({
+    const newBlog = await api.post('/api/blogs')
+    .set('Authorization', `Bearer ${token}`)
+    .send({
       title: "testiblogi",
       author: "testikäyttäjä",
       url: "https://testi.com",
       likes: 0
     })
     const oldLength = (await api.get('/api/blogs')).body.length
-    const deletedBlog = await api.delete('/api/blogs/' + newBlog.body.id)
+    const deletedBlog = await api.delete('/api/blogs/' + newBlog.body.id).set('Authorization', `Bearer ${token}`)
     assert.strictEqual(deletedBlog.status, 204)
     const newLength = (await api.get('/api/blogs')).body.length
     assert.strictEqual(newLength, oldLength - 1)
 })
 
 test('blog can be updated', async () => {
-    const newBlog = await api.post('/api/blogs').send({
+    const newBlog = await api.post('/api/blogs')
+    .set('Authorization', `Bearer ${token}`)
+    .send({
     title: "testiblogi",
     author: "testikäyttäjä",
     url: "https://testi.com",

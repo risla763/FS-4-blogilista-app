@@ -6,17 +6,17 @@ export const tokenExtractor = (request, response, next) => {
     {
     request.tok = authorization.replace('Bearer ', '')
     }
-    else {
-    return response.status(401).json({error: 'No token'})
-    }
-
     next()
 }
 
 //tähän se, joka selvittää pyynnön:
 export const userExtractor = async (request, response, next) => {
+  if (!request.tok){
+    return response.status(401).json({error: 'token invalid'})
+  }
     //pyyntöön liittyvä käyttäjä?
   const decodedToken = jsonwebtoken.verify(request.tok, process.env.SECRET)
+
   if (!decodedToken.id){
     return response.status(401).json({error: 'token invalid'})
   }

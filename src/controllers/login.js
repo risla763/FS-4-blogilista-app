@@ -17,9 +17,13 @@ router.post('/', async (request, response) => {
     : await bcrypt.compare(password, user.password)
 
   if (!(user && passwordCorrect)) {
+    console.log("väärin")
     return response.status(401).json({
       error: 'invalid username or password'
     })
+  }
+  else {
+    console.log("salsana oikein")
   }
 
   const userForToken = {

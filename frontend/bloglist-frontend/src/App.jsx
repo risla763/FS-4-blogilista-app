@@ -13,6 +13,10 @@ const App = () => {
 
   //
 
+  const HandleLogOut = async (event) => {
+    window.localStorage.clear()
+  }
+
   const handleLogin = async (event) => {
     //alempi koodi tekee sen että dataa voi käsitellä ilman että sivu päivittyy
     event.preventDefault()
@@ -20,8 +24,10 @@ const App = () => {
     try {
       //tämä menee login.js
       const user = await loginService.login({ username, password })
+
+      window.localStorage.setItem('loggedBlogUser', JSON.stringify(user))
+     // blogService.setToken(user.token)
       setUser(user)
-      console.log(user, "käyttäjä, credentials?")
       setUsername('')
       setPassword('')
     } catch {
@@ -33,6 +39,15 @@ const App = () => {
     }
     console.log('logging in with', username, password)
   }
+
+  useEffect(() => {
+    const loggedUserJSON = window.localStorage.getItem('loggedBlogUser')
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON)
+      setUser(user)
+      //noteService.setToken(user.token)
+    }
+  }, [])
 
   useEffect(() => {
     blogService.getAll().then(blogs =>{
@@ -75,12 +90,18 @@ const App = () => {
     )
 
 
+
+
   const BlogForm = () => (
     <div>
       <h2>blogs</h2>
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
+      <form onSubmit={HandleLogOut}>
+        <button type="Log Out">logout</button>
+        </form>
+
     </div>
   )
   return (

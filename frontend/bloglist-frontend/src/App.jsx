@@ -10,7 +10,9 @@ const App = () => {
   const [password, setPassword] = useState('') 
   const [user, setUser] = useState(null)
   const [errorMessage, setErrorMessage] = useState('')
-
+  const [newAuth, setNewAuth] = useState('')
+  const [newBlog, setNewBlog] = useState('')
+  const [newUrl, setNewUrl] = useState('')
   //
 
   const HandleLogOut = async (event) => {
@@ -26,7 +28,7 @@ const App = () => {
       const user = await loginService.login({ username, password })
 
       window.localStorage.setItem('loggedBlogUser', JSON.stringify(user))
-     // blogService.setToken(user.token)
+      blogService.setToken(user.token)
       setUser(user)
       setUsername('')
       setPassword('')
@@ -40,12 +42,31 @@ const App = () => {
     console.log('logging in with', username, password)
   }
 
+  const handleCreate = async (event) => {
+    event.preventDefault()
+    console.log(newBlog, newAuth, newUrl, "nämä Create saa lapseksi")
+    try {
+      const AddBlog = await blogService.create({title: newBlog, author: newAuth,url: newUrl})
+      setBlogs(blogs.concat(AddBlog))
+      setNewUrl('')
+      setNewAuth('')
+      setNewUrl('')
+    }
+    catch {
+      setErrorMessage('cant add')
+      console.log("Create ei toimi")
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
+    }
+  }
+
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
-      //noteService.setToken(user.token)
+      blogService.setToken(user.token)
     }
   }, [])
 
@@ -62,7 +83,6 @@ const App = () => {
       <div>
         <h2>Log in to application</h2>
     <form onSubmit={handleLogin}>
-
 
         <div>
           <label>
@@ -91,24 +111,66 @@ const App = () => {
 
 
 
-
+  console.log(newBlog, "input kenttä add blogs")
   const BlogForm = () => (
     <div>
+      <h2>Create new</h2>
+    <form onSubmit={handleCreate}>
+    <div>
+      <label>
+        title:
+        <input
+        type="text"
+        value={newBlog}
+        onChange={({ target }) => setNewBlog(target.value)}
+        />
+      </label>
+      </div>
+      <div>
+      <label>
+        author:
+        <input
+        type="text"
+        value={newAuth}
+        onChange={({ target }) => setNewAuth(target.value)}
+        />
+      </label>
+      </div>
+      <div>
+      <label>
+        url:
+        <input
+        type="text"
+        value={newUrl}
+        onChange={({ target }) => setNewUrl(target.value)}
+        />
+      </label>
+      </div>
+      <button type="submit">Create</button>
       <h2>blogs</h2>
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
-      <form onSubmit={HandleLogOut}>
-        <button type="Log Out">logout</button>
-        </form>
+      </form>
+      </div>
 
-    </div>
+  )
+
+
+    const LogOutForm = () => (
+
+      <form onSubmit={HandleLogOut}>
+        <h2>ei näy vielä!!!</h2>
+        <button type="submit">logout</button>
+        </form>
+    
   )
   return (
 
     <div>
       {!user && LoginForm()}
       {user && BlogForm()}
+      {user && LogOutForm()}
     </div>
   )
 }

@@ -7,13 +7,13 @@ import BlogForm from './components/CreateBlogs'
 const App = () => {
   const [blogs, setBlogs] = useState([])
   //uutta
-  const [username, setUsername] = useState('') 
-  const [password, setPassword] = useState('') 
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
   const [user, setUser] = useState('')
   const [ErrorMessage, setErrorMessage] = useState('')
-  const [newAuth, setNewAuth] = useState('')
-  const [newBlog, setNewBlog] = useState('')
-  const [newUrl, setNewUrl] = useState('')
+  //const [newAuth, setNewAuth] = useState('')
+  //const [newBlog, setNewBlog] = useState('')
+  //const [newUrl, setNewUrl] = useState('')
   const [AddMessage, setAddMessage] = useState('')
   const [createVisible, setCreateVisible] = useState(false)
   //
@@ -45,28 +45,10 @@ const App = () => {
     console.log('logging in with', username, password)
   }
 
-  //tulee näkyville kun nappia create new blog painetaan
-  //cancel nappi
-  const handleCreate = async (event) => {
-    event.preventDefault()
-    console.log(newBlog, newAuth, newUrl, "nämä Create saa lapseksi")
-    try {
-      const AddBlog = await blogService.create({title: newBlog, author: newAuth,url: newUrl})
-      setBlogs(blogs.concat(AddBlog))
-      setNewUrl('')
-      setAddMessage(`a new blog ${newBlog} by ${newAuth} added!`)
-      setTimeout(() => {
-        setAddMessage(null)}, 5000)
-      setNewBlog('')
-      setNewAuth('')
-    }
-    catch {
-      setErrorMessage('cant add')
-      console.log("Create ei toimi")
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
-    }
+
+
+  const handleCreate = ( blogObject ) => {
+    setBlogs(blogs.concat(blogObject))
   }
 
   useEffect(() => {
@@ -79,18 +61,18 @@ const App = () => {
   }, [])
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>{
-      setBlogs( blogs )
+    blogService.getAll().then(blogs => {
+      setBlogs(blogs)
       console.log("onko blogit,", blogs)
     }
-    )  
+    )
   }, [])
- 
-    //LOGINFORM....
+
+
   const LoginForm = () => (
-      <div>
-        <h2>Log in to application</h2>
-    <form onSubmit={handleLogin}>
+    <div>
+      <h2>Log in to application</h2>
+      <form onSubmit={handleLogin}>
 
         <div>
           <label>
@@ -114,53 +96,46 @@ const App = () => {
         </div>
         <button type="submit">login</button>
       </form>
-      </div>
-    )
-//......
+    </div>
+  )
 
-//.....
-  
+
+
+
   const ListBlogsForm = () => {
     return (
-    <div>
-    <h2>blogs</h2>
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
-      )}
+      <div>
+        <h2>blogs</h2>
+        {blogs.map(blog =>
+          <Blog key={blog.id} blog={blog} />
+        )}
       </div>
     )
   }
 
 
 
-  
-  //Alla LogOut Form.......
 
-    const LogOutForm = ( {username} ) => (
 
-      <form onSubmit={HandleLogOut}>
-        <h2>{username} is logged in</h2>
-        <button type="submit">logout</button>
-        </form>
-    
+
+  const LogOutForm = ({ username }) => (
+
+    <form onSubmit={HandleLogOut}>
+      <h2>{username} is logged in</h2>
+      <button type="submit">logout</button>
+    </form>
+
   )
-  //............
+
   return (
 
     <div>
-      {AddMessage && <div className="addNotification">{AddMessage}</div>}
-      {ErrorMessage && <div className="errorNotification">{ErrorMessage}</div>}
       {!user && LoginForm()}
       {user && ListBlogsForm()}
       {user && <BlogForm createVisible={createVisible}
-  setCreateVisible={setCreateVisible}
-  handleCreate={handleCreate}
-  newBlog={newBlog}
-  setNewBlog={setNewBlog}
-  newAuth={newAuth}
-  setNewAuth={setNewAuth}
-  newUrl={newUrl}
-  setNewUrl={setNewUrl}/>}
+        setCreateVisible={setCreateVisible}
+        handleCreate={handleCreate}
+      />}
       {user && <LogOutForm username={user.username} />}
     </div>
   )

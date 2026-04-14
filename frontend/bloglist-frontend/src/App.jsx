@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import BlogForm from './components/CreateBlogs'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -14,6 +15,7 @@ const App = () => {
   const [newBlog, setNewBlog] = useState('')
   const [newUrl, setNewUrl] = useState('')
   const [AddMessage, setAddMessage] = useState('')
+  const [createVisible, setCreateVisible] = useState(false)
   //
 
   const HandleLogOut = async (event) => {
@@ -43,6 +45,8 @@ const App = () => {
     console.log('logging in with', username, password)
   }
 
+  //tulee näkyville kun nappia create new blog painetaan
+  //cancel nappi
   const handleCreate = async (event) => {
     event.preventDefault()
     console.log(newBlog, newAuth, newUrl, "nämä Create saa lapseksi")
@@ -82,7 +86,7 @@ const App = () => {
     )  
   }, [])
  
-    
+    //LOGINFORM....
   const LoginForm = () => (
       <div>
         <h2>Log in to application</h2>
@@ -112,54 +116,25 @@ const App = () => {
       </form>
       </div>
     )
+//......
 
-
-
-  console.log(newBlog, "input kenttä add blogs")
-  const BlogForm = () => (
+//.....
+  
+  const ListBlogsForm = () => {
+    return (
     <div>
-      <h2>Create new</h2>
-    <form onSubmit={handleCreate}>
-    <div>
-      <label>
-        title:
-        <input
-        type="text"
-        value={newBlog}
-        onChange={({ target }) => setNewBlog(target.value)}
-        />
-      </label>
-      </div>
-      <div>
-      <label>
-        author:
-        <input
-        type="text"
-        value={newAuth}
-        onChange={({ target }) => setNewAuth(target.value)}
-        />
-      </label>
-      </div>
-      <div>
-      <label>
-        url:
-        <input
-        type="text"
-        value={newUrl}
-        onChange={({ target }) => setNewUrl(target.value)}
-        />
-      </label>
-      </div>
-      <button type="submit">Create</button>
-      <h2>blogs</h2>
+    <h2>blogs</h2>
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
-      </form>
       </div>
+    )
+  }
 
-  )
 
+
+  
+  //Alla LogOut Form.......
 
     const LogOutForm = ( {username} ) => (
 
@@ -169,13 +144,23 @@ const App = () => {
         </form>
     
   )
+  //............
   return (
 
     <div>
       {AddMessage && <div className="addNotification">{AddMessage}</div>}
       {ErrorMessage && <div className="errorNotification">{ErrorMessage}</div>}
       {!user && LoginForm()}
-      {user && BlogForm()}
+      {user && ListBlogsForm()}
+      {user && <BlogForm createVisible={createVisible}
+  setCreateVisible={setCreateVisible}
+  handleCreate={handleCreate}
+  newBlog={newBlog}
+  setNewBlog={setNewBlog}
+  newAuth={newAuth}
+  setNewAuth={setNewAuth}
+  newUrl={newUrl}
+  setNewUrl={setNewUrl}/>}
       {user && <LogOutForm username={user.username} />}
     </div>
   )

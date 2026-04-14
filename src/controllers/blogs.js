@@ -31,6 +31,8 @@ router.post('/', userExtractor,  async (request, response) => {
   console.log(savedBlog._id, "blogin id")
   user.blogs = user.blogs.concat(savedBlog.id)
   console.log(user.blogs, "käyttäjän blogit")
+  console.log("saved blog?", savedBlog)
+  console.log(process.env.MONGODB_URI, "?")
   await user.save()
 
   response.status(201).json(savedBlog)

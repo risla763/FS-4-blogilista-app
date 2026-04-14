@@ -8,11 +8,12 @@ const App = () => {
   //uutta
   const [username, setUsername] = useState('') 
   const [password, setPassword] = useState('') 
-  const [user, setUser] = useState(null)
-  const [errorMessage, setErrorMessage] = useState('')
+  const [user, setUser] = useState('')
+  const [ErrorMessage, setErrorMessage] = useState('')
   const [newAuth, setNewAuth] = useState('')
   const [newBlog, setNewBlog] = useState('')
   const [newUrl, setNewUrl] = useState('')
+  const [AddMessage, setAddMessage] = useState('')
   //
 
   const HandleLogOut = async (event) => {
@@ -33,7 +34,7 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch {
-      setErrorMessage('wrong credentials')
+      setErrorMessage('wrong username or password')
       console.log("mitä tapahtuu")
       setTimeout(() => {
         setErrorMessage(null)
@@ -49,8 +50,11 @@ const App = () => {
       const AddBlog = await blogService.create({title: newBlog, author: newAuth,url: newUrl})
       setBlogs(blogs.concat(AddBlog))
       setNewUrl('')
+      setAddMessage(`a new blog ${newBlog} by ${newAuth} added!`)
+      setTimeout(() => {
+        setAddMessage(null)}, 5000)
+      setNewBlog('')
       setNewAuth('')
-      setNewUrl('')
     }
     catch {
       setErrorMessage('cant add')
@@ -157,10 +161,10 @@ const App = () => {
   )
 
 
-    const LogOutForm = () => (
+    const LogOutForm = ( {username} ) => (
 
       <form onSubmit={HandleLogOut}>
-        <h2>ei näy vielä!!!</h2>
+        <h2>{username} is logged in</h2>
         <button type="submit">logout</button>
         </form>
     
@@ -168,9 +172,11 @@ const App = () => {
   return (
 
     <div>
+      {AddMessage && <div className="addNotification">{AddMessage}</div>}
+      {ErrorMessage && <div className="errorNotification">{ErrorMessage}</div>}
       {!user && LoginForm()}
       {user && BlogForm()}
-      {user && LogOutForm()}
+      {user && <LogOutForm username={user.username} />}
     </div>
   )
 }

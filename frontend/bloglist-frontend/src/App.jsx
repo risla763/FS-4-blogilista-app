@@ -4,6 +4,8 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import BlogForm from './components/CreateBlogs'
 
+
+//ENNEN PALAUTUSTA BLOGIN LISÄÄJÄN TIEDOT TOIMIIKO?
 const App = () => {
   const [blogs, setBlogs] = useState([])
 
@@ -125,6 +127,7 @@ const App = () => {
 
 
 
+
   const LoginForm = () => (
     <div>
       <h2>Log in to application</h2>
@@ -162,7 +165,7 @@ const App = () => {
     return (
       <div>
         <h2>blogs</h2>
-        {blogs.map(blog =>
+        {blogs.sort((a,b)=> b.likes - a.likes).map(blog =>
 
           <div key={blog.id} style={{ display: 'flex' }}>
             <div style={{ flex: 1 }}>

@@ -6,20 +6,45 @@ import BlogForm from './components/CreateBlogs'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  //uutta
+
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState('')
   const [ErrorMessage, setErrorMessage] = useState('')
-  //const [newAuth, setNewAuth] = useState('')
-  //const [newBlog, setNewBlog] = useState('')
-  //const [newUrl, setNewUrl] = useState('')
+
   const [AddMessage, setAddMessage] = useState('')
   const [createVisible, setCreateVisible] = useState(false)
-  //
+  const [viewList, setViewList] = useState([])
+
 
   const HandleLogOut = async (event) => {
     window.localStorage.clear()
+  }
+
+  const handleView = (id) => {
+    console.log("viewNappi", id)
+    const FalseOrTrue = blogs.find(blog => 
+      blog.id === id
+    )
+    if (FalseOrTrue.visible === true) {
+      setBlogs(blogs.map(blog =>
+        blog.id === id
+          ? { ...blog, visible: false }
+          : blog
+      ))
+  }
+  else {
+    setBlogs(blogs.map(blog =>
+      blog.id === id
+
+        ? { ...blog, visible: true }
+        : blog
+    ))
+  }
+  }
+
+  const handleLike = async (event) => {
+    console.log("liked")
   }
 
   const handleLogin = async (event) => {
@@ -46,8 +71,8 @@ const App = () => {
   }
 
 
-
-  const handleCreate = ( blogObject ) => {
+  //vaihda alla olevan nimi parempaan (esim. ADDTODATABASE)
+  const handleCreate = (blogObject) => {
     setBlogs(blogs.concat(blogObject))
   }
 
@@ -63,6 +88,17 @@ const App = () => {
   useEffect(() => {
     blogService.getAll().then(blogs => {
       setBlogs(blogs)
+    }
+    )
+  }, [])
+
+  useEffect(() => {
+    blogService.getAll().then(blogs => {
+      const addView = blogs.map(blog => ({
+        ...blog,
+        visible: false
+      }))
+      setBlogs(addView)
       console.log("onko blogit,", blogs)
     }
     )
@@ -107,7 +143,20 @@ const App = () => {
       <div>
         <h2>blogs</h2>
         {blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} />
+
+          <div key={blog.id} style={{ display: 'flex' }}>
+            <div style={{ flex: 1 }}>
+              <Blog key={blog.id} blog={blog} />
+              {blog.visible &&
+              <div> 
+                {blog.url} <br></br>
+                likes {blog.likes} <button onClick={() => handleLike(blog.id)}>like</button> <br></br> 
+                {user.username}
+              </div>
+              }
+            </div>
+            <button onClick={() => handleView(blog.id)}>view</button>
+          </div>
         )}
       </div>
     )

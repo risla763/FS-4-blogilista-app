@@ -15,6 +15,7 @@ const App = () => {
   const [AddMessage, setAddMessage] = useState('')
   const [createVisible, setCreateVisible] = useState(false)
   const [viewList, setViewList] = useState([])
+  const [newLikes, setNewLikes] = useState('')
 
 
   const HandleLogOut = async (event) => {
@@ -43,8 +44,26 @@ const App = () => {
   }
   }
 
-  const handleLike = async (event) => {
-    console.log("liked")
+  const handleLike = async (id) => {
+    console.log("liked", id, newLikes)
+    const updatedLikes = blogs.map(blog => 
+      blog.id === id
+
+      ? {...blog, likes: blog.likes +1
+       }
+      : blog
+    )
+
+
+    const Updatedblog = updatedLikes.find(blog => blog.id === id)
+
+    const updateFinal = await blogService.putBlog(Updatedblog)
+    setBlogs(blogs.map(blog =>
+      blog.id === id
+      ? {...updateFinal, visible: true} 
+      : blog
+    ))
+
   }
 
   const handleLogin = async (event) => {
@@ -103,6 +122,7 @@ const App = () => {
     }
     )
   }, [])
+
 
 
   const LoginForm = () => (

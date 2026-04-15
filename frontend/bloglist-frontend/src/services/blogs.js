@@ -25,5 +25,20 @@ const create = async newObject => {
   return response.data
 }
 
+//? put
+const putBlog = async updatedObject => {
+  console.log("put funktio", updatedObject.id)
+  const config = {
+    headers: { Authorization: token }
+  }
+  console.log('mikä config', config)
+  const db = getAll()
+  console.log('onko blogit', db)
+  const response = await axios.put(`${baseUrl}/${updatedObject.id}`, updatedObject, config)
 
-export default { getAll, create, setToken }
+
+  return response.data
+}
+
+
+export default { getAll, create, setToken, putBlog }

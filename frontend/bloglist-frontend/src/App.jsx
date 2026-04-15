@@ -51,10 +51,11 @@ const App = () => {
     const updatedLikes = blogs.map(blog => 
       blog.id === id
 
-      ? {...blog, likes: blog.likes +1
+      ? {...blog, user: blog.user, likes: blog.likes +1
        }
       : blog
     )
+
 
 
     const Updatedblog = updatedLikes.find(blog => blog.id === id)
@@ -62,7 +63,7 @@ const App = () => {
     const updateFinal = await blogService.putBlog(Updatedblog)
     setBlogs(blogs.map(blog =>
       blog.id === id
-      ? {...updateFinal, visible: true} 
+      ? {...updateFinal, user: blog.user, visible: true} 
       : blog
     ))
 
@@ -174,7 +175,7 @@ const App = () => {
               <div> 
                 {blog.url} <br></br>
                 likes {blog.likes} <button onClick={() => handleLike(blog.id)}>like</button> <br></br> 
-                {user.username}
+                {blog.user.username}
               </div>
               }
             </div>

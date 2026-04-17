@@ -18,6 +18,7 @@ const App = () => {
   const [createVisible, setCreateVisible] = useState(false)
   const [viewList, setViewList] = useState([])
   const [newLikes, setNewLikes] = useState('')
+  const [userIdList, setUserIdList] = useState([])
 
 
   const HandleLogOut = async (event) => {
@@ -25,7 +26,7 @@ const App = () => {
   }
 
   const handleView = (id) => {
-    console.log("viewNappi", id)
+    //console.log("viewNappi", id,"kkkkkk", user.id)
     const FalseOrTrue = blogs.find(blog => 
       blog.id === id
     )
@@ -47,7 +48,7 @@ const App = () => {
   }
 
   const handleLike = async (id) => {
-    console.log("liked", id, newLikes)
+    //console.log("liked", id, newLikes)
     const updatedLikes = blogs.map(blog => 
       blog.id === id
 
@@ -72,7 +73,7 @@ const App = () => {
   const handleLogin = async (event) => {
     //alempi koodi tekee sen että dataa voi käsitellä ilman että sivu päivittyy
     event.preventDefault()
-    console.log(username, password, "username ja password")
+    //console.log(username, password, "username ja password")
     try {
       //tämä menee login.js
       const user = await loginService.login({ username, password })
@@ -95,8 +96,37 @@ const App = () => {
 
   //vaihda alla olevan nimi parempaan (esim. ADDTODATABASE)
   const handleCreate = (blogObject) => {
+    console.log(blogObject, "tällasen luo")
+    console.log("udhilfhipesdjoihoja", user._id)
+    //const tuple =  {Id: user.id, Token: user.token}
+    const UserBlogSync = setUserIdList(userIdList.concat(tuple))
+    
+    //lista jossa usernmaen tokenit ja user.id:t tupleina ja sillee set list..
     setBlogs(blogs.concat(blogObject))
   }
+
+  const handleDelete = async (blogId) => {
+    console.log(blogId)
+    const newList = await blogService.deleteBlog(blogId)
+    console.log("delete palauttaa" ,newList)
+    blogService.getAll().then(blogs => {
+      setBlogs(blogs)
+    })
+  }
+  //vielä se viesti window juttu
+  //ja joku että delete nappi näkyy vain jos omistat blogin...
+  const handleWindow = async (blog) => {
+
+    console.log("user id", blog.user.id, "ja", user.id)
+    //if (blog.user.id === )
+    if (window.confirm(`Remove ${blog.title} by ${blog.author}`)) {
+      handleDelete(blog.id)
+    } else {
+      return
+    }
+
+  }
+  //korjaa-> kun lisää blgoin niin lisääjän nimi näkyy heti
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogUser')
@@ -175,7 +205,9 @@ const App = () => {
               <div> 
                 {blog.url} <br></br>
                 likes {blog.likes} <button onClick={() => handleLike(blog.id)}>like</button> <br></br> 
-                {blog.user.username}
+                {blog.user.username}<br></br> 
+                { blog.user.id == user.id && (<button onClick={() => handleWindow(blog)}>Remove</button>)}
+                <pre id="log"></pre>
               </div>
               }
             </div>

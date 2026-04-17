@@ -40,5 +40,18 @@ const putBlog = async updatedObject => {
   return response.data
 }
 
+const deleteBlog = async blogId => {
+  console.log("menee delereen", blogId)
+  const config = {
+    headers: { Authorization: token }
+  }
+  const response = await axios.delete(`${baseUrl}/${blogId}`, config)
+  console.log(response, "MITÄÄÄ RESPONSE DELETEESSSÄÄÄÄÄ?")
+  const newList = getAll()
+  return newList
 
-export default { getAll, create, setToken, putBlog }
+
+}
+
+
+export default { getAll, create, setToken, putBlog, deleteBlog }

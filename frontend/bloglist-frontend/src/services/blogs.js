@@ -5,7 +5,7 @@ let token = null
 
 const setToken = newToken => {
   token = `Bearer ${newToken}`
-  console.log(token, "TOKEN")
+  console.log(token, 'TOKEN')
 }
 
 const getAll = async () => {
@@ -15,7 +15,6 @@ const getAll = async () => {
 
 
 const create = async newObject => {
-  console.log("create funktion sisällä", newObject)
   const config = {
     headers: { Authorization: token }
   }
@@ -27,7 +26,6 @@ const create = async newObject => {
 
 //? put
 const putBlog = async updatedObject => {
-  console.log("put funktio", updatedObject.id)
   const config = {
     headers: { Authorization: token }
   }
@@ -41,12 +39,11 @@ const putBlog = async updatedObject => {
 }
 
 const deleteBlog = async blogId => {
-  console.log("menee delereen", blogId)
   const config = {
     headers: { Authorization: token }
   }
   const response = await axios.delete(`${baseUrl}/${blogId}`, config)
-  console.log(response, "MITÄÄÄ RESPONSE DELETEESSSÄÄÄÄÄ?")
+  console.log('responsen data deletessä', response)
   const newList = getAll()
   return newList
 

@@ -14,20 +14,20 @@ const App = () => {
   const [user, setUser] = useState('')
   const [ErrorMessage, setErrorMessage] = useState('')
 
-  const [AddMessage, setAddMessage] = useState('')
+  //const [AddMessage, setAddMessage] = useState('')
   const [createVisible, setCreateVisible] = useState(false)
-  const [viewList, setViewList] = useState([])
-  const [newLikes, setNewLikes] = useState('')
-  const [userIdList, setUserIdList] = useState([])
+  //const [viewList, setViewList] = useState([])
+  //const [newLikes, setNewLikes] = useState('')
+  //const [userIdList, setUserIdList] = useState([])
 
 
-  const HandleLogOut = async (event) => {
+  const HandleLogOut = async () => {
     window.localStorage.clear()
   }
 
   const handleView = (id) => {
     //console.log("viewNappi", id,"kkkkkk", user.id)
-    const FalseOrTrue = blogs.find(blog => 
+    const FalseOrTrue = blogs.find(blog =>
       blog.id === id
     )
     if (FalseOrTrue.visible === true) {
@@ -36,25 +36,25 @@ const App = () => {
           ? { ...blog, visible: false }
           : blog
       ))
-  }
-  else {
-    setBlogs(blogs.map(blog =>
-      blog.id === id
+    }
+    else {
+      setBlogs(blogs.map(blog =>
+        blog.id === id
 
-        ? { ...blog, visible: true }
-        : blog
-    ))
-  }
+          ? { ...blog, visible: true }
+          : blog
+      ))
+    }
   }
 
   const handleLike = async (id) => {
-    //console.log("liked", id, newLikes)
-    const updatedLikes = blogs.map(blog => 
+    const updatedLikes = blogs.map(blog =>
       blog.id === id
 
-      ? {...blog, user: blog.user, likes: blog.likes +1
-       }
-      : blog
+        ? {
+          ...blog, user: blog.user, likes: blog.likes + 1
+        }
+        : blog
     )
 
 
@@ -64,8 +64,8 @@ const App = () => {
     const updateFinal = await blogService.putBlog(Updatedblog)
     setBlogs(blogs.map(blog =>
       blog.id === id
-      ? {...updateFinal, user: blog.user, visible: true} 
-      : blog
+        ? { ...updateFinal, user: blog.user, visible: true }
+        : blog
     ))
 
   }
@@ -85,7 +85,6 @@ const App = () => {
       setPassword('')
     } catch {
       setErrorMessage('wrong username or password')
-      console.log("mitä tapahtuu")
       setTimeout(() => {
         setErrorMessage(null)
       }, 5000)
@@ -96,19 +95,15 @@ const App = () => {
 
   //vaihda alla olevan nimi parempaan (esim. ADDTODATABASE)
   const handleCreate = (blogObject) => {
-    console.log(blogObject, "tällasen luo")
-    console.log("udhilfhipesdjoihoja", user._id)
-    //const tuple =  {Id: user.id, Token: user.token}
-    const UserBlogSync = setUserIdList(userIdList.concat(tuple))
-    
-    //lista jossa usernmaen tokenit ja user.id:t tupleina ja sillee set list..
     setBlogs(blogs.concat(blogObject))
   }
 
+  //KORJAA SE ETTÄ KAIKKI BLOGIT EIVÄT HETI NÄY POISTETTUINA..PITÄÄ PÄIVITTÄÄ SIVU MISKI?
+  //create ilman authoria toimii...KORJAAA koska like ei toimi tässä...
+  //createn jälkeen kun avaa blogin eikä sivua ole päivitetty käyttäjä, joka loi ei näy
   const handleDelete = async (blogId) => {
     console.log(blogId)
-    const newList = await blogService.deleteBlog(blogId)
-    console.log("delete palauttaa" ,newList)
+    blogService.deleteBlog(blogId)
     blogService.getAll().then(blogs => {
       setBlogs(blogs)
     })
@@ -117,7 +112,6 @@ const App = () => {
   //ja joku että delete nappi näkyy vain jos omistat blogin...
   const handleWindow = async (blog) => {
 
-    console.log("user id", blog.user.id, "ja", user.id)
     //if (blog.user.id === )
     if (window.confirm(`Remove ${blog.title} by ${blog.author}`)) {
       handleDelete(blog.id)
@@ -151,7 +145,6 @@ const App = () => {
         visible: false
       }))
       setBlogs(addView)
-      console.log("onko blogit,", blogs)
     }
     )
   }, [])
@@ -196,19 +189,19 @@ const App = () => {
     return (
       <div>
         <h2>blogs</h2>
-        {blogs.sort((a,b)=> b.likes - a.likes).map(blog =>
+        {blogs.sort((a, b) => b.likes - a.likes).map(blog =>
 
           <div key={blog.id} style={{ display: 'flex' }}>
             <div style={{ flex: 1 }}>
               <Blog key={blog.id} blog={blog} />
               {blog.visible &&
-              <div> 
-                {blog.url} <br></br>
-                likes {blog.likes} <button onClick={() => handleLike(blog.id)}>like</button> <br></br> 
-                {blog.user.username}<br></br> 
-                { blog.user.id == user.id && (<button onClick={() => handleWindow(blog)}>Remove</button>)}
-                <pre id="log"></pre>
-              </div>
+                <div>
+                  {blog.url} <br></br>
+                  likes {blog.likes} <button onClick={() => handleLike(blog.id)}>like</button> <br></br>
+                  {blog.user.username}<br></br>
+                  {blog.user.id === user.id && (<button onClick={() => handleWindow(blog)}>Remove</button>)}
+                  <pre id="log"></pre>
+                </div>
               }
             </div>
             <button onClick={() => handleView(blog.id)}>view</button>

@@ -50,6 +50,7 @@ test('url, likes and user show when cliked view button', async () => {
   expect(screen.getByText(/likes\s*50/i)).toBeDefined()
   expect(element).toBeDefined()
   const element2 = screen.getByText(/test name/i)
+  expect(element2).toBeDefined()
 
     
 })

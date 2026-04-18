@@ -54,3 +54,22 @@ test('url, likes and user show when cliked view button', async () => {
 
     
 })
+
+test('like button adds likes', async () => {
+  const mockHandler = vi.fn()
+  render(<Blog blog={blog} user={user2} handleLike={mockHandler} />) 
+  const user = userEvent.setup()
+  const button = screen.getByText('view')
+  await user.click(button)
+  const button2 = screen.getByText('like')
+  await user.click(button2)
+
+  await user.click(button2)
+  expect(mockHandler.mock.calls).toHaveLength(2)
+
+
+})
+
+//Tee testi, joka varmistaa, että jos komponentin like-nappia painetaan kahdesti, 
+//komponentin propsina saamaa tapahtumankäsittelijäfunktiota
+ //kutsutaan kaksi kertaa.

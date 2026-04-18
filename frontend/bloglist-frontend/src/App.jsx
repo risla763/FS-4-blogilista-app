@@ -2,6 +2,10 @@ import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import {
+  BrowserRouter as Router,
+  Routes, Route, Link
+} from 'react-router-dom'
 import BlogForm from './components/CreateBlogs'
 
 
@@ -13,12 +17,34 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState('')
   const [ErrorMessage, setErrorMessage] = useState('')
+  const [page, setPage] = useState('')
 
-  //const [AddMessage, setAddMessage] = useState('')
+
   const [createVisible, setCreateVisible] = useState(false)
-  //const [viewList, setViewList] = useState([])
-  //const [newLikes, setNewLikes] = useState('')
-  //const [userIdList, setUserIdList] = useState([])
+
+
+  const toPage = (page) => (event) => {
+      event.preventDefault()
+      setPage(page)
+    }
+
+  useEffect(() => {
+    if (page === 'blogs') {
+      if (user === ''){
+        setUser('?')
+      }
+      console.log("moi", user)
+    }
+    else if (page === 'login') {
+      setUser('')
+    }
+  }, [page])
+
+  
+
+
+
+
 
 
   const HandleLogOut = async () => {
@@ -145,6 +171,7 @@ const App = () => {
         visible: false
       }))
       setBlogs(addView)
+      console.log("TÄSSÄ MALLI", addView)
     }
     )
   }, [])
@@ -189,11 +216,13 @@ const App = () => {
     return (
       <div>
         <h2>blogs</h2>
+
+        
         {blogs.sort((a, b) => b.likes - a.likes).map(blog =>
 
           <div key={blog.id} style={{ display: 'flex' }}>
             <div style={{ flex: 1 }}>
-              <Blog key={blog.id} blog={blog} />
+              <Blog key={blog.id} blog={blog} visible={blog} />
               {blog.visible &&
                 <div>
                   {blog.url} <br></br>
@@ -225,18 +254,37 @@ const App = () => {
 
   )
 
+  const ButtonForm = () => (
+      <div>
+        <a href="" onClick={toPage('blogs')}>
+          blogs
+        </a>
+      </div>
+
+  )
+
+  const LogInIfNotLogdIn = () => (
+    <div>
+      <a href="" onClick={toPage('login')} >
+        login
+      </a>
+    </div>
+  )
+
   return (
 
     <div>
       {!user && LoginForm()}
+      {ButtonForm()}
+      {(!user || user === '?') && LogInIfNotLogdIn()}
       {user && ListBlogsForm()}
       {user && <BlogForm createVisible={createVisible}
         setCreateVisible={setCreateVisible}
         handleCreate={handleCreate}
       />}
-      {user && <LogOutForm username={user.username} />}
+      {user && user !== '?' && <LogOutForm username={user.username} />}
     </div>
   )
 }
-
+//blogs kun käyttäjä sisällä vielä näkymään ja reitit
 export default App

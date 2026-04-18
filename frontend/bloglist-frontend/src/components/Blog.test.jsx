@@ -11,13 +11,14 @@ import Blog from './Blog'
     url: 'test url',
     likes: 50,
     user: {
-        username: 'testi name',
+        username: 'test name',
         id: '333'
     }
   }
 
 
   const user2 = {
+    name: 'test user',
     id: "1234"}
 
 
@@ -33,7 +34,7 @@ test('renders content', () => {
 
 })
 
-test('url and likes show when cliked view button', async () => {
+test('url, likes and user show when cliked view button', async () => {
 
   render(<Blog blog={blog} user={user2} />)
 
@@ -48,5 +49,7 @@ test('url and likes show when cliked view button', async () => {
   const element = screen.getByText('test url')
   expect(screen.getByText(/likes\s*50/i)).toBeDefined()
   expect(element).toBeDefined()
+  const element2 = screen.getByText(/test name/i)
+
     
 })

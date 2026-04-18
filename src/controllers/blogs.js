@@ -28,14 +28,16 @@ router.post('/', userExtractor,  async (request, response) => {
   }
   const savedBlog = await blogObject.save()
 
-  console.log(savedBlog._id, "blogin id")
+  const populatedResult = await blogMongo.findById(blogObject.id).populate('user', { username: 1, name: 1 })
+
+
   user.blogs = user.blogs.concat(savedBlog.id)
-  console.log(user.blogs, "käyttäjän blogit")
+
   console.log("saved blog?", savedBlog)
   console.log(process.env.MONGODB_URI, "?")
   await user.save()
-
-  response.status(201).json(savedBlog)
+  console.log("ONKO USERRR", savedBlog)
+  response.status(201).json(populatedResult)
 })
 
 router.delete('/:id', userExtractor, async (request, response) => {

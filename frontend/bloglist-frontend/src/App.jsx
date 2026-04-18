@@ -129,23 +129,14 @@ const App = () => {
   //createn jälkeen kun avaa blogin eikä sivua ole päivitetty käyttäjä, joka loi ei näy
   const handleDelete = async (blogId) => {
     console.log(blogId)
-    blogService.deleteBlog(blogId)
-    blogService.getAll().then(blogs => {
+    blogService.deleteBlog(blogId).then(blogs => {
       setBlogs(blogs)
+ 
     })
   }
   //vielä se viesti window juttu
   //ja joku että delete nappi näkyy vain jos omistat blogin...
-  const handleWindow = async (blog) => {
 
-    //if (blog.user.id === )
-    if (window.confirm(`Remove ${blog.title} by ${blog.author}`)) {
-      handleDelete(blog.id)
-    } else {
-      return
-    }
-
-  }
   //korjaa-> kun lisää blgoin niin lisääjän nimi näkyy heti
 
   useEffect(() => {
@@ -213,28 +204,17 @@ const App = () => {
 
 
   const ListBlogsForm = () => {
+
+    console.log(user, "user")
+
     return (
       <div>
         <h2>blogs</h2>
 
         
         {blogs.sort((a, b) => b.likes - a.likes).map(blog =>
-
-          <div key={blog.id} style={{ display: 'flex' }}>
-            <div style={{ flex: 1 }}>
-              <Blog key={blog.id} blog={blog} visible={blog} />
-              {blog.visible &&
-                <div>
-                  {blog.url} <br></br>
-                  likes {blog.likes} <button onClick={() => handleLike(blog.id)}>like</button> <br></br>
-                  {blog.user.username}<br></br>
-                  {blog.user.id === user.id && (<button onClick={() => handleWindow(blog)}>Remove</button>)}
-                  <pre id="log"></pre>
-                </div>
-              }
-            </div>
-            <button onClick={() => handleView(blog.id)}>view</button>
-          </div>
+          
+          <Blog blog={blog} user={user} handleLike={handleLike} handleDelete={handleDelete}/>
         )}
       </div>
     )

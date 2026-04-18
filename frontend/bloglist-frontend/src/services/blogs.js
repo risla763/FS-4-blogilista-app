@@ -9,8 +9,9 @@ const setToken = newToken => {
 }
 
 const getAll = async () => {
-  const request = axios.get(baseUrl)
-  return request.then(response => response.data)
+  const response = await axios.get(baseUrl)
+  console.log("response get allissa", response.data)
+  return response.data
 }
 
 
@@ -21,6 +22,7 @@ const create = async newObject => {
   console.log('mikä config', config)
 
   const response = await axios.post(baseUrl, newObject, config)
+  console.log("mikä response",response.data)
   return response.data
 }
 

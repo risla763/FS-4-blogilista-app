@@ -18,8 +18,10 @@ const BlogForm = ({
     event.preventDefault()
 
     try {
-      const AddBlog = await blogService.create({ title: newBlog, author: newAuth, url: newUrl })
-      handleCreate(AddBlog)
+      blogService.create({ title: newBlog, author: newAuth, url: newUrl })
+      .then(AddBlog => {
+        handleCreate(AddBlog)})
+
       setAddMessage(`a new blog ${newBlog} by ${newAuth} added!`)
       setTimeout(() => {
         setAddMessage(null)

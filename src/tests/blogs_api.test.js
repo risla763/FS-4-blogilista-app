@@ -8,14 +8,32 @@ import { get } from 'node:http'
 import User from '../models/userMongo.js'
 
 const initialBlogs = [
-  {
-    "_id": "6981f7992aeed0666ca3bd89",
-    "__v": 0
+{
+  "_id": {
+    "$oid": "69e3dc58f2c2f9fee3cc6e6e"
   },
-  {
-    "_id": "698b59475160ca0c6912fc48",
-    "__v": 0
-  }
+  "title": "Blog 2",
+  "author": "Auth 2",
+  "url": "url 2",
+  "user": {
+    "$oid": "69b0913c84cd584ebf980ebf"
+  },
+  "likes": 27,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69e4da97f1a7f9cdaae6bc88"
+  },
+  "title": "toimiiko",
+  "author": "testii",
+  "url": "resri",
+  "user": {
+    "$oid": "69b57fcaaec46fb901b401f1"
+  },
+  "likes": 4,
+  "__v": 0
+}
 ]
 test('make TestUser in the database with token', async() => {
     const newUser = await api.post('/api/users').send({

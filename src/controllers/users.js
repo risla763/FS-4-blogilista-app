@@ -1,5 +1,6 @@
 import express from 'express'
 import UserMongo from '../models/userMongo.js'
+import BlogMongo from '../models/userMongo.js'
 import bcrypt from 'bcrypt'
 import populate from 'dotenv'
 
@@ -34,4 +35,11 @@ router.get('/', async (request, response) => {
     const users = await UserMongo.find({}).populate('blogs', {title: 1, author: 1, url: 1})
     response.json(users)
 })
+
+router.post('/reset', async (request, response) => {
+  await UserMongo.deleteMany({})
+  await BlogMongo.deleteMany({})
+  response.status(204).end()
+})
+
 export default router

@@ -7,6 +7,46 @@ import {
   Routes, Route, Link
 } from 'react-router-dom'
 import BlogForm from './components/CreateBlogs'
+import styled from 'styled-components'
+
+
+const LoginTitle = styled.h2`
+    font-size: 1.7em;
+    text-align: center;
+    color: #c7a39b;
+  `;
+
+const Button = styled.button`
+    background-color: #6a823e;
+    border: none;
+    border-radius: 50%;
+`;
+
+const Backround = styled.section`
+
+  background: #9c9f69;
+`;
+
+const Label = styled.label`
+  color: #8b123aff;
+`;
+
+const Field = styled.div`
+  margin-bottom: 15px;
+  
+`
+
+const Input = styled.input`
+  background-color: transparent; 
+  border: none;
+  border-bottom: 2px solid #efd4dd;
+  &:focus {
+      outline: none;
+      box-shadow: none;
+
+    }
+}
+`
 
 
 //ENNEN PALAUTUSTA BLOGIN LISÄÄJÄN TIEDOT TOIMIIKO?
@@ -168,35 +208,40 @@ const App = () => {
   }, [])
 
 
-
-
   const LoginForm = () => (
     <div>
-      <h2>Log in to application</h2>
+      <Backround>
+
+      <LoginTitle>Log in to application</LoginTitle>
+
       <form onSubmit={handleLogin}>
 
         <div>
-          <label>
+          <Field>
+          <Label>
             username
-            <input
+            <Input
               type="text"
               value={username}
               onChange={({ target }) => setUsername(target.value)}
             />
-          </label>
+          </Label>
+          </Field>
         </div>
         <div>
-          <label>
+          <Label>
             password
-            <input
+            <Input
               type="password"
               value={password}
               onChange={({ target }) => setPassword(target.value)}
             />
-          </label>
+          </Label>
         </div>
-        <button type="submit">login</button>
+        <Button type="submit">login</Button>
+        
       </form>
+    </Backround>
     </div>
   )
 

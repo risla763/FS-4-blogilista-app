@@ -1,5 +1,39 @@
 import { useState } from 'react' //uus
 import blogService from '../services/blogs'
+import styled from 'styled-components'
+
+const Backround = styled.section`
+
+  background: #9c9f69;
+`;
+
+const Button = styled.button`
+    background-color: #6a823e;
+    border: none;
+    border-radius: 50%;
+`;
+
+const Label = styled.label`
+  color: #8b123aff;
+`;
+
+const Input = styled.input`
+  background-color: transparent; 
+  border: none;
+  border-bottom: 2px solid #efd4dd;
+  &:focus {
+      outline: none;
+      box-shadow: none;
+
+    }
+}
+`
+
+const ButtonCancel = styled.button`
+    background-color: #9c9ebcff;
+    border: none;
+    border-radius: 50%;
+`;
 
 const BlogForm = ({
   createVisible,
@@ -39,49 +73,50 @@ const BlogForm = ({
   }
 
   return (
-
+      <Backround>
     <div>
       {AddMessage && <div className="addNotification">{AddMessage}</div>}
       {ErrorMessage && <div className="errorNotification">{ErrorMessage}</div>}
       <h2>Create new</h2>
       <div style={hideWhenVisible}>
-        <button onClick={() => setCreateVisible(true)}>create</button>
+        <Button onClick={() => setCreateVisible(true)}>create</Button>
       </div>
       <form style={showWhenVisible} onSubmit={handleCreateService}>
         <div>
-          <label>
+          <Label>
             title:
-            <input
+            <Input
               type="text"
               value={newBlog}
               onChange={({ target }) => setNewBlog(target.value)}
             />
-          </label>
+          </Label>
         </div>
         <div>
-          <label>
+          <Label>
           author:
-            <input
+            <Input
               type="text"
               value={newAuth}
               onChange={({ target }) => setNewAuth(target.value)}
             />
-          </label>
+          </Label>
         </div>
         <div>
-          <label>
+          <Label>
                   url:
-            <input
+            <Input
               type="text"
               value={newUrl}
               onChange={({ target }) => setNewUrl(target.value)}
             />
-          </label>
+          </Label>
         </div>
-        <button type="submit">Create</button>
-        <button type="button" onClick={() => setCreateVisible(false)}>cancel</button>
+        <Button type="submit">Create</Button>
+        <ButtonCancel type="button" onClick={() => setCreateVisible(false)}>cancel</ButtonCancel>
       </form>
     </div>
+    </Backround>
 
   )
 }

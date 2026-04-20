@@ -52,6 +52,10 @@ const BlogForm = ({
     event.preventDefault()
 
     try {
+      if (!newBlog === ''|| newAuth === ''|| newUrl === ''){
+      setErrorMessage('Blog cannot be added, please check title, author and url')
+      return
+      }
       blogService.create({ title: newBlog, author: newAuth, url: newUrl })
       .then(AddBlog => {
         handleCreate(AddBlog)})
